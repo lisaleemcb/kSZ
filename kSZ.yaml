@@ -1,0 +1,17 @@
+name: kSZ
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - astropy
+  - numpy
+  - scipy
+  - matplotlib
+  - jupyter
+  - pip
+  - camb
+  - pysr
+  - pip:
+    - cobaya
+    - black
