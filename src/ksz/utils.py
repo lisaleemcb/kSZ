@@ -24,6 +24,7 @@ import argparse
 import logging
 import sys
 
+from scipy.interpolate import CubicSpline
 from ksz import __version__
 
 __author__ = "Lisa McBride"
@@ -40,21 +41,59 @@ _logger = logging.getLogger(__name__)
 # when using this Python module as a library.
 
 
-def fib(n):
-    """Fibonacci example function
+def tau(n):
+    """Calculates tau given an ionisation history xe(z)
 
     Args:
-      n (int): integer
+        z  (array_like): redshift
+        xe (array_like): ionisation history
 
     Returns:
-      int: n-th Fibonacci number
+        z  (array_like): redshift
+        tau (array_like): tau (cumulative integral)
     """
-    assert n > 0
-    a, b = 1, 1
-    for _i in range(n - 1):
-        a, b = b, a + b
-    return a
+    z_unity = 5.0 # redshift at which hydrogen is has an ionisation fraction x_HII=1
+    z_HeII = 3.5  # redshift at which helium doubly ionises
 
+    if z.min() <= z_unity:
+        z_extra = np.linspace(0.0, z.min(), endpoint=False)
+    else:
+        z_extra = np.linspace(0.0, z_unity)
+
+    xe_lowz = np.ones_like(z_extra)
+
+    spl = CubicSpline(x, y)
+
+    return z, tau
+
+def xe_allz(z, xe):
+    """Calculates tau given an ionisation history xe(z)
+
+    Args:
+        z  (array_like): redshift
+        xe (array_like): ionisation history
+
+    Returns:
+        z  (array_like): redshift
+        xe (array_like): extrapolated up to z=0
+    """
+    z_unity = 5.0 # redshift at which hydrogen is has an ionisation fraction x_HII=1
+    z_HeII = 3.5  # redshift at which helium doubly ionises
+
+    if z.min() <= z_unity:
+        z_extra = np.linspace(0.0, z.min(), endpoint=False)
+    else:
+        z_extra = np.linspace(0.0, z_unity)
+
+    xe_lowz = np.ones_like(z_extra)
+    z2interpl = np.concatenate(z_extra, z)
+    xe2interpl = np.concatenate(xe_lowz, xe)
+
+    xe_all = CubicSpline(z_interpl, xe_interpl)
+
+    z_all = np.linspace(0.0, z_max(), 1000)
+
+    return z_all, xe_all(z_all)
 
 # ---- CLI ----
 # The functions defined in this section are wrappers around the main Python
