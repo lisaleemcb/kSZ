@@ -23,8 +23,10 @@ References:
 import argparse
 import logging
 import sys
+import numpy as np
 
 from scipy.interpolate import CubicSpline
+from catwoman.utils import find_index
 from ksz import __version__
 
 __author__ = "Lisa McBride"
@@ -39,6 +41,9 @@ _logger = logging.getLogger(__name__)
 # Python scripts/interactive interpreter, e.g. via
 # `from ksz.skeleton import fib`,
 # when using this Python module as a library.
+
+def dimless(k, P):
+    return (k**3.0 * P) / (2 * np.pi**2)
 
 
 def tau(n):
@@ -77,6 +82,11 @@ def xe_allz(z, xe):
         z  (array_like): redshift
         xe (array_like): extrapolated up to z=0
     """
+    xe_recomb = 1.7e-4
+    Yp = 0.2453
+    not4 = 3.9715 #eta
+    fHe = Yp/(not4*(1-Yp))
+
     z_unity = 5.0 # redshift at which hydrogen is has an ionisation fraction x_HII=1
     z_HeII = 3.5  # redshift at which helium doubly ionises
 
@@ -85,17 +95,20 @@ def xe_allz(z, xe):
     else:
         z_extra = np.linspace(0.0, z_unity)
 
-    xe_lowz = np.ones_like(z_extra)
-    z2interpl = np.concatenate(z_extra, z)
-    xe2interpl = np.concatenate(xe_lowz, xe)
+    xe_lowz = np.ones_like(z_extra) * 1.08 + xe_recomb
 
-    xe_all = CubicSpline(z_interpl, xe_interpl)
+    z2interpl = np.concatenate((z_extra, np.sort(z)))
+    xe2interpl = np.concatenate((xe_lowz, xe[::-1]))
 
-    z_all = np.linspace(0.0, z_max(), 1000)
+    xe_all = CubicSpline(z2interpl, xe2interpl)
 
-    return z_all, xe_all(z_all)
+    z_all = np.linspace(0.0, z.max(), 1000)
+    add_He = (z_all < 3.5).astype(float) * fHe
+
+    return z_all, np.minimum(xe_all(z_all), (1.08 + xe_recomb)) + add_He
 
 # ---- CLI ----
+#
 # The functions defined in this section are wrappers around the main Python
 # API allowing them to be called directly from the terminal as a CLI
 # executable/script.
