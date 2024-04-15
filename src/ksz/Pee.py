@@ -3,7 +3,7 @@ import numpy as np
 from ksz.utils import *
 from ksz.parameters import *
 
-class KSZ:
+class Pee:
     def __init__(self,
                 k,
                 z,
@@ -20,16 +20,8 @@ class KSZ:
         self.cosmo_params = cosmo_params
         self.astro_params = astro_params
 
-        def Cell(self):
-            z = self.z
-            Dimless_Be = dimless(P_Be())
 
-
-        def P_Be(self):
-           pass
-
-
-class Gorce2022(KSZ):
+class Gorce2022(Pee):
     def __init__(self,
                 k,
                 z,
@@ -70,7 +62,7 @@ class Gorce2022(KSZ):
 
 
 
-class LoReLi(KSZ):
+class LoReLi(Pee):
     def __init__(self,
                 k,
                 z,
