@@ -5,6 +5,7 @@ channels:
 dependencies:
   - python
   - pandas
+  - setuptools
   - pyarrow
   - astropy
   - numpy
@@ -13,9 +14,11 @@ dependencies:
   - jupyter
   - camb
   - pysr
+  - emcee
   - pip
   - pip:
       - cobaya
       - black
       # - openai
       - alphadoc
+      # - 21cmtools

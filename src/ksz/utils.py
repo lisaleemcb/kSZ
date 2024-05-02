@@ -24,9 +24,11 @@ import argparse
 import logging
 import sys
 import numpy as np
+import copy as cp
 
 from scipy.interpolate import CubicSpline
 from catwoman.utils import find_index
+from ksz.parameters import modelparams_Gorce2022
 from ksz import __version__
 
 __author__ = "Lisa McBride"
@@ -44,7 +46,6 @@ _logger = logging.getLogger(__name__)
 
 def dimless(k, P):
     return (k**3.0 * P) / (2 * np.pi**2)
-
 
 def tau(n):
     """Calculates tau given an ionisation history xe(z)
@@ -107,95 +108,28 @@ def xe_allz(z, xe):
 
     return z_all, np.minimum(xe_all(z_all), (1.08 + xe_recomb)) + add_He
 
-# ---- CLI ----
-#
-# The functions defined in this section are wrappers around the main Python
-# API allowing them to be called directly from the terminal as a CLI
-# executable/script.
+def unpack_data(sim, zrange, krange):
 
+    ksize = krange[1]-krange[0]
+    if isinstance(zrange, int):
+        data = sim.Pee[zrange]['P_k'][krange[0]:krange[1]]
+    else:
+        zsize = zrange[1]-zrange[0]
+        data = np.zeros((zsize, ksize))
+        for i, zi in enumerate(range(zrange[0], zrange[1])):
+            data[i] = sim.Pee[zi]['P_k'][krange[0]:krange[1]]
 
-def parse_args(args):
-    """Parse command line parameters
+    return data
 
-    Args:
-      args (List[str]): command line parameters as list of strings
-          (for example  ``["--help"]``).
+def pack_params(params):
 
-    Returns:
-      :obj:`argparse.Namespace`: command line parameters namespace
-    """
-    parser = argparse.ArgumentParser(description="Just a Fibonacci demonstration")
-    parser.add_argument(
-        "--version",
-        action="version",
-        version=f"kSZ {__version__}",
-    )
-    parser.add_argument(dest="n", help="n-th Fibonacci number", type=int, metavar="INT")
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        dest="loglevel",
-        help="set loglevel to INFO",
-        action="store_const",
-        const=logging.INFO,
-    )
-    parser.add_argument(
-        "-vv",
-        "--very-verbose",
-        dest="loglevel",
-        help="set loglevel to DEBUG",
-        action="store_const",
-        const=logging.DEBUG,
-    )
-    return parser.parse_args(args)
+    model_params = cp.deepcopy(modelparams_Gorce2022)
+    for i in range(len(params)):
+        p = params[i]
+        if i == 0:
+            p = 10.**p
 
+        key = list(model_params.keys())[i]
+        model_params[key] = p
 
-def setup_logging(loglevel):
-    """Setup basic logging
-
-    Args:
-      loglevel (int): minimum loglevel for emitting messages
-    """
-    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(
-        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
-    )
-
-
-def main(args):
-    """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
-
-    Instead of returning the value from :func:`fib`, it prints the result to the
-    ``stdout`` in a nicely formatted message.
-
-    Args:
-      args (List[str]): command line parameters as list of strings
-          (for example  ``["--verbose", "42"]``).
-    """
-    args = parse_args(args)
-    setup_logging(args.loglevel)
-    _logger.debug("Starting crazy calculations...")
-    print(f"The {args.n}-th Fibonacci number is {fib(args.n)}")
-    _logger.info("Script ends here")
-
-
-def run():
-    """Calls :func:`main` passing the CLI arguments extracted from :obj:`sys.argv`
-
-    This function can be used as entry point to create console scripts with setuptools.
-    """
-    main(sys.argv[1:])
-
-
-if __name__ == "__main__":
-    # ^  This is a guard statement that will prevent the following code from
-    #    being executed in the case someone imports this file instead of
-    #    executing it as a script.
-    #    https://docs.python.org/3/library/__main__.html
-
-    # After installing your project with pip, users can also run your Python
-    # modules as scripts via the ``-m`` flag, as defined in PEP 338::
-    #
-    #     python -m ksz.skeleton 42
-    #
-    run()
+    return model_params
