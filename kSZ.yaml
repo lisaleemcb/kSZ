@@ -19,7 +19,7 @@ dependencies:
   - pip:
       # - cobaya
       # - black
-      # - git+https://github.com/lisaleemcb/catwoman.git
+      - git+https://github.com/lisaleemcb/catwoman.git
       # - openai
       # - alphadoc
       # - 21cmtools
