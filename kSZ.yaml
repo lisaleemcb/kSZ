@@ -17,8 +17,9 @@ dependencies:
   - emcee
   - pip
   - pip:
-      - cobaya
-      - black
+      # - cobaya
+      # - black
+      # - git+https://github.com/lisaleemcb/catwoman.git
       # - openai
-      - alphadoc
+      # - alphadoc
       # - 21cmtools

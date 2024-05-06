@@ -59,7 +59,10 @@ class Gorce2022(Pee):
         elif astro_params is None:
             self.astro_params = astro_fiducial
 
-        self.spectra = self.calc_spectra()
+        self.spectra = self.calc_spectra(self.model_params)
+
+        print('Gorce 2022 Pee spectrum is now initialised!')
+        print('')
 
     def Pee(self, z, model_params=None):
         if model_params is not None:
@@ -67,28 +70,18 @@ class Gorce2022(Pee):
         else:
             model_params = self.model_params
 
-        spectra = self.calc_spectra(model_params=model_params)
+        spectra = self.calc_spectra(model_params)
         return spectra[np.where(self.z == z)[0]].flatten()
 
-    def calc_spectra(self, z=None, model_params=None):
-        if z is not None:
-            z = z
-        else:
-            z = self.z
-
-        if model_params is not None:
-            model_params = model_params
-        else:
-            model_params = self.model_params
-
+    def calc_spectra(self, model_params):
         # if self.verbose:
         #     print('Calculating spectra with model parameters:', model_params)
         #     print('')
 
-        fH = self.astro_params['fH']
-        xe = self.xe[:, np.newaxis]
-
-        return (fH - xe) * self.earlytime(model_params) + xe * self.latetime(model_params)
+        if len(self.z) == 1:
+            return (self.earlytime(model_params) + self.latetime(model_params)).flatten()
+        else:
+            return self.earlytime(model_params) + self.latetime(model_params)
 
     def earlytime(self, model_params, z=None, power=(1.0 / 5.0)):
         if z is not None:
@@ -97,14 +90,17 @@ class Gorce2022(Pee):
             z = self.z
 
         k = self.k
-        k = k[:, np.newaxis]
-        xe = self.xe
 
+        # to ensure correct broadcasting
+        k = k[np.newaxis,:]
+        xe = self.xe[:, np.newaxis]
+
+        fH = self.astro_params['fH']
         alpha_0 = model_params['alpha_0']
         kappa = model_params['kappa']
 
-        # transposing so that the output is of the shape (z.size, k.size)
-        return (alpha_0 * xe**(-power))[:, np.newaxis] / (1 + (k/kappa)**3 * xe).T
+        # should be shape (z.size, k.size)
+        return (fH - xe) * (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3 * xe)
 
     def latetime(self, model_params, z=None, k=None):
         if z is not None:
@@ -117,7 +113,9 @@ class Gorce2022(Pee):
         else:
             k = self.k
 
-        return self.b_deltae(model_params)**2 * self.Pdd
+        xe = self.xe[:, np.newaxis]
+
+        return xe * self.b_deltae(model_params)**2 * self.Pdd
 
     def b_deltae(self, model_params, z=None):
         if z is not None:
@@ -129,7 +127,9 @@ class Gorce2022(Pee):
         k_f = model_params['k_f']
         g = model_params['g']
 
-        return .5 * (np.exp(-k/k_f) + 1 / (1 + (g * k / k_f)**(7.0/2.0)))
+        # should be shape (1, k.size)
+        b_deltae = (.5 * (np.exp(-k/k_f) + 1 / (1 + (g * k / k_f)**(7.0/2.0)))).reshape(1, k.size)
+        return b_deltae
 
     def calc_Pdd(self, z=None, k=None):
         if self.verbose:
@@ -163,6 +163,8 @@ class Gorce2022(Pee):
                                                         npoints= k.size)
         spl = CubicSpline(kh, pk.T)
         Pdd = spl(self.k)
+
+        # should be shape(z.size, k.size)
 
         return Pdd.T
 
