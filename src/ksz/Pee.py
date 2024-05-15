@@ -156,17 +156,16 @@ class Gorce2022(Pee):
         pars.set_cosmology(H0=H0, ombh2=ombh2, omch2=omch2)
         pars.set_for_lmax(2500, lens_potential_accuracy=0);
 
-        pars.set_matter_power(redshifts=np.asarray(z), kmax=10.0)
         results = camb.get_results(pars)
-        kh, z, pk = results.get_matter_power_spectrum(minkh=k[0] * results.Params.h,
-                                                        maxkh=k[-1] * results.Params.h,
-                                                        npoints= k.size)
-        spl = CubicSpline(kh, pk.T)
-        Pdd = spl(self.k)
+        PK = camb.get_matter_power_interpolator(pars, nonlinear=True,
+            hubble_units=False, k_hunit=False, kmax=k[-1],
+            var1='delta_cdm',var2='delta_cdm', zmax=z[0])
 
         # should be shape(z.size, k.size)
+        # also careful of the redshift ordering as outputted from CAMB!!!
+        Pdd = PK.P(z[::-1], k)[::-1]
 
-        return Pdd.T
+        return Pdd
 
 class LoReLi(Pee):
     def __init__(self,
