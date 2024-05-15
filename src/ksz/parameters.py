@@ -76,6 +76,8 @@ kappa = 0.10
 
 modelparams_Gorce2022 = {'alpha_0': 10**(3.93),
                   'kappa': 0.084,
+                  'a_xe': -1.0 / 5.0,
+                  'k_xe': 1.0,
                     'k_f': 9.4,
                       'g': .5}
 

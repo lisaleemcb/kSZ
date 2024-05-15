@@ -98,9 +98,12 @@ class Gorce2022(Pee):
         fH = self.astro_params['fH']
         alpha_0 = model_params['alpha_0']
         kappa = model_params['kappa']
+        a_xe = model_params['a_xe']
+        k_xe = model_params['k_xe']
 
         # should be shape (z.size, k.size)
-        return (fH - xe) * (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3 * xe)
+        return (fH - xe) * (alpha_0 * xe**(a_xe)) / (1 + (k/kappa)**3 * xe**(k_xe))
+        # return (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3 * xe)
 
     def latetime(self, model_params, z=None, k=None):
         if z is not None:
@@ -161,7 +164,7 @@ class Gorce2022(Pee):
         kh, z, pk = results.get_matter_power_spectrum(minkh=k[0] * results.Params.h,
                                                         maxkh=k[-1] * results.Params.h,
                                                         npoints= k.size)
-        spl = CubicSpline(kh, pk.T)
+        spl = CubicSpline(kh, pk[::-1].T)
         Pdd = spl(self.k)
 
         # should be shape(z.size, k.size)
