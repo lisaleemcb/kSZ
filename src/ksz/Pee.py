@@ -98,9 +98,12 @@ class Gorce2022(Pee):
         fH = self.astro_params['fH']
         alpha_0 = model_params['alpha_0']
         kappa = model_params['kappa']
+        a_xe = model_params['a_xe']
+        k_xe = model_params['k_xe']
 
         # should be shape (z.size, k.size)
-        return (fH - xe) * (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3 * xe)
+        return (fH - xe) * (alpha_0 * xe**(a_xe)) / (1 + (k/kappa)**3 * xe**(k_xe))
+        # return (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3 * xe)
 
     def latetime(self, model_params, z=None, k=None):
         if z is not None:
@@ -157,9 +160,11 @@ class Gorce2022(Pee):
         pars.set_for_lmax(2500, lens_potential_accuracy=0);
 
         results = camb.get_results(pars)
+
         PK = camb.get_matter_power_interpolator(pars, nonlinear=True,
             hubble_units=False, k_hunit=False, kmax=k[-1],
             var1='delta_cdm',var2='delta_cdm', zmax=z[0])
+
 
         # should be shape(z.size, k.size)
         # also careful of the redshift ordering as outputted from CAMB!!!
