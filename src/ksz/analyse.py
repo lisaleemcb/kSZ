@@ -1,5 +1,6 @@
 import numpy as np
 import copy as cp
+import matplotlib.pyplot as plt
 import emcee
 import corner
 
@@ -11,13 +12,12 @@ from scipy.interpolate import CubicSpline
 from ksz.parameters import *
 
 
-def log_like(params, data, model_func, priors, errors_obs):
-    model_params = {'alpha_0': 10**(3.93),
-                      'kappa': 0.084,
-                        'k_f': 9.4,
-                          'g': .5}
-
+def log_like(params, data, model_func, priors, errors_obs, debug=False):
+    model_params = cp.deepcopy(modelparams_Gorce2022)
     keys = list(model_params.keys())[:len(params)]
+
+    if debug:
+        print('fitting', keys)
 
     for i, p in enumerate(params):
         key = keys[i]
@@ -31,19 +31,33 @@ def log_like(params, data, model_func, priors, errors_obs):
 
     prior_alpha, prior_kappa, prior_kf, prior_g = priors
     if (log_alpha < prior_alpha[0]) or (log_alpha > prior_alpha[1]):
-       return -np.inf
+        if debug:
+            print('outside prior range for log_alpha')
+        return -np.inf
     if (model_params['kappa'] < prior_kappa[0]) or (model_params['kappa'] > prior_kappa[1]):
+        if debug:
+            print('outside prior range for kappa')
         return -np.inf
     if (model_params['k_f'] < prior_kf[0]) or (model_params['k_f'] > prior_kf[1]):
+        if debug:
+            print('outside prior range for k_f')
         return -np.inf
     if (model_params['g'] < prior_g[0]) or (model_params['g'] > prior_g[1]):
+        if debug:
+            print('outside prior range for g')
         return -np.inf
 
     # print(model.calc_spectra(model_params).flatten() / data.flatten())
     _model = model_func(model_params).flatten()
     _data = data.flatten()
 
+    if debug:
+        fig, ax = plt.subplots(1,2)
+        ax[0].plot((_model - _data)**2)
+        ax[1].plot((_model - _data)**2 / errors_obs**2)
+
     return -.5 * np.sum((_model - _data)**2 / errors_obs**2)
+
 
 class Fit:
     def __init__(self,
@@ -115,7 +129,7 @@ class Fit:
             self.model_func = self.model.calc_spectra
 
         if self.fit_early:
-            if debug:
+            if self.verbose:
                 print('Fitting the early time Pee')
             self.model_func = self.model.earlytime
             self.Pbb = ksz.utils.unpack_data(sim.Pbb, zrange, krange)
@@ -123,11 +137,10 @@ class Fit:
            #  self.data = self.model.earlytime(model_params)
 
         if self.fit_late:
-            if debug:
+            if self.verbose:
                 print('Fitting the late time Pee')
             self.data = self.sim.Pee[self.zi]['P_k'][self.k0:self.kf]
             self.model_func = self.model.latetime
-
 
         self.obs_errs = cp.copy(self.data) * self.frac_err
         self.truths = cp.copy(list(self.model_params.values()))

@@ -133,3 +133,9 @@ def pack_params(params):
         model_params[key] = p
 
     return model_params
+
+def unpack_params(model_params, ndim=2):
+    params = list(model_params.values())[:ndim]
+    params[0] = np.log10(params[0])
+
+    return params
