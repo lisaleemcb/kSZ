@@ -70,6 +70,7 @@ class Fit:
                 sim,
                 priors,
                 model_type=ksz.Pee.Gorce2022,
+                Pdd=None,
                 fit_early=False,
                 fit_late=False,
                 frac_err=None,
@@ -87,6 +88,7 @@ class Fit:
         self.sim = sim
         self.priors = priors
         self.model_type = model_type
+        self.Pdd = Pdd
         self.fit_early = fit_early
         self.fit_late = fit_late
         self.frac_err = frac_err
@@ -111,7 +113,7 @@ class Fit:
             self.z = self.sim.z[self.zi]
             self.xe = np.array([self.sim.xe[self.zi]])
             self.data = self.sim.Pee[self.zi]['P_k'][self.k0:self.kf]
-            self.model = self.model_type(self.k, [self.z], self.xe,
+            self.model = self.model_type(self.k, [self.z], self.xe, Pdd=self.Pdd,
                                     model_params=self.model_params,
                                     verbose=self.verbose)
             self.obs_errs = self.sim.Pee[self.zi]['var'][self.k0:self.kf]
@@ -121,8 +123,9 @@ class Fit:
             self.zf = zrange[1]
             self.z = self.sim.z[self.z0:self.zf]
             self.xe = self.sim.xe[self.z0:self.zf]
+
             self.data = ksz.utils.unpack_data(sim.Pee, 'P_k', zrange, krange)
-            self.model = self.model_type(self.k, self.z, self.xe,
+            self.model = self.model_type(self.k, self.z, self.xe, Pdd=self.Pdd,
                                     model_params=self.model_params,
                                     verbose=self.verbose)
             self.obs_errs = np.sqrt(ksz.utils.unpack_data(sim.Pee, 'var', zrange, krange))
