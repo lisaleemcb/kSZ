@@ -2,7 +2,7 @@ import numpy as np
 import copy as cp
 import matplotlib.pyplot as plt
 import emcee
-import corner
+#import corner
 
 import ksz.analyse
 import ksz.utils
@@ -189,7 +189,5 @@ class Fit:
             print('fetching samples and posterior values...')
         samples = sampler.get_chain(flat=True)
         logp = sampler.get_log_prob(flat=True)
-
-
 
         return samples, logp
