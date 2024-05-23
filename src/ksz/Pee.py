@@ -1,5 +1,5 @@
 import numpy as np
-import camb
+#import camb
 
 from ksz.utils import *
 from ksz.parameters import *
@@ -42,6 +42,7 @@ class Gorce2022(Pee):
         if Pdd is not None:
             self.Pdd = Pdd
         elif Pdd is None:
+            import camb
             self.Pdd = self.calc_Pdd()
 
         if model_params is not None:

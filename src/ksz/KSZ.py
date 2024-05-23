@@ -69,7 +69,6 @@ class Gorce2022(KSZ):
             return self.P_m
 
 
-
 class LoReLi(KSZ):
     def __init__(self,
                 k,
