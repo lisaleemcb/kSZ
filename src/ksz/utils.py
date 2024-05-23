@@ -108,16 +108,16 @@ def xe_allz(z, xe):
 
     return z_all, np.minimum(xe_all(z_all), (1.08 + xe_recomb)) + add_He
 
-def unpack_data(spectra, zrange, krange):
+def unpack_data(spectra, key, zrange, krange):
 
     ksize = krange[1]-krange[0]
     if isinstance(zrange, int):
-        data = spectra[zrange]['P_k'][krange[0]:krange[1]]
+        data = spectra[zrange][key][krange[0]:krange[1]]
     else:
         zsize = zrange[1]-zrange[0]
         data = np.zeros((zsize, ksize))
         for i, zi in enumerate(range(zrange[0], zrange[1])):
-            data[i] = spectra[zi]['P_k'][krange[0]:krange[1]]
+            data[i] = spectra[zi][key][krange[0]:krange[1]]
 
     return data
 
