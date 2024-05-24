@@ -42,7 +42,6 @@ class Gorce2022(Pee):
         if Pdd is not None:
             self.Pdd = Pdd
         elif Pdd is None:
-            import camb
             self.Pdd = self.calc_Pdd()
 
         if model_params is not None:
@@ -136,6 +135,7 @@ class Gorce2022(Pee):
         return b_deltae
 
     def calc_Pdd(self, z=None, k=None):
+        import camb
         if self.verbose:
             print('Now calculating the dark matter overdensity power spectrum, Pdd...')
             print('')
