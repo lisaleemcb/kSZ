@@ -18,6 +18,7 @@ def log_like(params, data, model_func, priors, errors_obs, debug=False):
 
     if debug:
         print('fitting', keys)
+        print('data:', data)
 
     for i, p in enumerate(params):
         key = keys[i]
@@ -50,17 +51,85 @@ def log_like(params, data, model_func, priors, errors_obs, debug=False):
     # print(model.calc_spectra(model_params).flatten() / data.flatten())
     _model = model_func(model_params).flatten()
     _data = data.flatten()
+    _errs = errors_obs.flatten()
 
     if debug:
         fig, ax = plt.subplots(1,2)
         ax[0].plot((_model - _data)**2)
-        ax[1].plot((_model - _data)**2 / errors_obs**2)
+        ax[1].plot((_model - _data)**2 / _errs**2)
 
-    return -.5 * np.sum((_model - _data)**2 / errors_obs**2)
+    return -.5 * np.sum((_model - _data)**2 / _errs**2)
+
+def chi2_contributions(params, data, model_func, priors, errors_obs, debug=False):
+    model_params = cp.deepcopy(modelparams_Gorce2022)
+    keys = list(model_params.keys())[:len(params)]
+
+    if debug:
+        print('fitting', keys)
+        print('data:', data)
+
+    for i, p in enumerate(params):
+        key = keys[i]
+        # print(f'rewriting {key} with value {p}')
+        if key == 'alpha_0':
+             model_params[keys[i]] = 10**p
+        else:
+            model_params[keys[i]] = p
+
+    log_alpha = np.log10(model_params['alpha_0'])
+
+    prior_alpha, prior_kappa, prior_kf, prior_g = priors
+    if (log_alpha < prior_alpha[0]) or (log_alpha > prior_alpha[1]):
+        if debug:
+            print('outside prior range for log_alpha')
+        return -np.inf
+    if (model_params['kappa'] < prior_kappa[0]) or (model_params['kappa'] > prior_kappa[1]):
+        if debug:
+            print('outside prior range for kappa')
+        return -np.inf
+    if (model_params['k_f'] < prior_kf[0]) or (model_params['k_f'] > prior_kf[1]):
+        if debug:
+            print('outside prior range for k_f')
+        return -np.inf
+    if (model_params['g'] < prior_g[0]) or (model_params['g'] > prior_g[1]):
+        if debug:
+            print('outside prior range for g')
+        return -np.inf
+
+    # print(model.calc_spectra(model_params).flatten() / data.flatten())
+    _model = model_func(model_params).flatten()
+    _data = data.flatten()
+    _errs = errors_obs.flatten()
+
+    if debug:
+        fig, ax = plt.subplots(1,2)
+        ax[0].plot((_model - _data)**2)
+        ax[1].plot((_model - _data)**2 / _errs**2)
+
+    return -.5 * np.sum((_model - _data)**2 / _errs**2)
+
 
 def make_errorbars():
     pass
 
+def lklhd_EMMA(params,
+               data,
+               model_func,
+               priors,
+               errors_obs):
+
+    n_copies = data.shape[0]
+    lklhds = np.zeros(n_copies)
+
+    for i in range(n_copies):
+        lklhds[i] = log_like(params,
+                data[i],
+                model_func,
+                priors,
+                errors_obs[i].flatten(),
+                debug=False)
+
+    return lklhds.sum()
 
 class Fit:
     def __init__(self,
@@ -69,11 +138,14 @@ class Fit:
                 model_params,
                 sim,
                 priors,
+                data=None,
+                obs_errs=None,
+                frac_err=None,
                 model_type=ksz.Pee.Gorce2022,
                 Pdd=None,
                 fit_early=False,
                 fit_late=False,
-                frac_err=None,
+                fit_EMMA=False,
                 nwalkers=10,
                 ndim=2,
                 burnin=100,
@@ -87,11 +159,12 @@ class Fit:
         self.model_params = model_params
         self.sim = sim
         self.priors = priors
+        self.frac_err = frac_err
         self.model_type = model_type
         self.Pdd = Pdd
         self.fit_early = fit_early
         self.fit_late = fit_late
-        self.frac_err = frac_err
+        self.fit_EMMA = fit_EMMA
         self.nwalkers = nwalkers
         self.ndim = ndim
         self.burnin= burnin
@@ -108,15 +181,26 @@ class Fit:
             self.single_z = False
 
         self.k = self.sim.k[self.k0:self.kf]
+
         if self.single_z:
             self.zi = zrange
             self.z = self.sim.z[self.zi]
             self.xe = np.array([self.sim.xe[self.zi]])
-            self.data = self.sim.Pee[self.zi]['P_k'][self.k0:self.kf]
+
+
+            if data is None:
+                self.data = self.sim.Pee[self.zi]['P_k'][self.k0:self.kf]
+            elif data is not None:
+                 self.data = data
+
             self.model = self.model_type(self.k, [self.z], self.xe, Pdd=self.Pdd,
                                     model_params=self.model_params,
                                     verbose=self.verbose)
-            self.obs_errs = self.sim.Pee[self.zi]['var'][self.k0:self.kf]
+
+            if obs_errs is None:
+                self.obs_errs = np.sqrt(self.sim.Pee[self.zi]['var'][self.k0:self.kf])
+            elif obs_errs is not None:
+                self.obs_errs = obs_errs
 
         elif not self.single_z:
             self.z0 = zrange[0]
@@ -124,11 +208,18 @@ class Fit:
             self.z = self.sim.z[self.z0:self.zf]
             self.xe = self.sim.xe[self.z0:self.zf]
 
-            self.data = ksz.utils.unpack_data(sim.Pee, 'P_k', zrange, krange)
+            if data is None:
+                self.data = ksz.utils.unpack_data(sim.Pee, 'P_k', zrange, krange)
+            elif data is not None:
+                self.data = data
             self.model = self.model_type(self.k, self.z, self.xe, Pdd=self.Pdd,
                                     model_params=self.model_params,
                                     verbose=self.verbose)
-            self.obs_errs = np.sqrt(ksz.utils.unpack_data(sim.Pee, 'var', zrange, krange))
+
+            if obs_errs is None:
+                self.obs_errs = np.sqrt(ksz.utils.unpack_data(sim.Pee, 'var', zrange, krange))
+            elif obs_errs is not None:
+                self.obs_errs = obs_errs
 
 
         if self.fit_early == self.fit_late:
@@ -175,11 +266,17 @@ class Fit:
         if self.debug:
             print(f'fit params are: {self.truths[:self.ndim]}')
 
-        p0 = np.random.normal(scale=.001, size=(self.nwalkers, self.ndim)) * np.asarray(self.truths[:self.ndim])
+        p0 = np.random.normal(scale=.1, size=(self.nwalkers, self.ndim)) * np.asarray(self.truths[:self.ndim])
         p0 = p0 + np.ones_like(p0) * np.asarray(self.truths[:self.ndim])
 
-        sampler = emcee.EnsembleSampler(self.nwalkers, self.ndim, ksz.analyse.log_like,
-                                        args=[self.data, self.model_func, self.priors, self.obs_errs.flatten()])
+        if self.fit_EMMA:
+            sampler = emcee.EnsembleSampler(self.nwalkers, self.ndim, ksz.analyse.lklhd_EMMA,
+                                            args=[self.data, self.model_func, self.priors, self.obs_errs])
+
+
+        elif not self.fit_EMMA:
+            sampler = emcee.EnsembleSampler(self.nwalkers, self.ndim, ksz.analyse.log_like,
+                                            args=[self.data, self.model_func, self.priors, self.obs_errs.flatten()])
 
         state = sampler.run_mcmc(p0, self.burnin)
         sampler.reset()
