@@ -60,7 +60,7 @@ fH = 1.
 if HeliumI:
 	not4 = 3.9715 #eta
 	fHe = Yp/(not4*(1-Yp))
-	fH=1+fHe
+	fH=1+2*fHe
 helium_fullreion_redshift = 3.5
 helium_fullreion_start = 5.0
 helium_fullreion_deltaredshift = 0.5
