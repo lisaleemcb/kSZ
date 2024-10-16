@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 #import camb
 
@@ -10,10 +11,17 @@ class Pee:
                 z,
                 xe,
                 verbose=False):
-
+        
         self.z = z
         self.k = k
         self.xe = xe
+
+
+        if np.all(z[:-1] < z[1:]):
+            warnings.warn("Your redshifts are ordered from latest times to earliest, your OUTPUT WILL BE REVERSED IN REDSHIFT", UserWarning)
+
+            self.z = z[::-1]
+            self.xe = xe[::-1]
 
         self.verbose = verbose
 
@@ -61,8 +69,9 @@ class Gorce2022(Pee):
 
         self.spectra = self.calc_spectra(self.model_params)
 
-        print('Gorce 2022 Pee spectrum is now initialised!')
-        print('')
+        if verbose:
+            print('Gorce 2022 Pee spectrum is now initialised!')
+            print('')
 
     def Pee(self, z, model_params=None):
         if model_params is not None:
@@ -81,7 +90,7 @@ class Gorce2022(Pee):
         if len(self.z) == 1:
             return (self.earlytime(model_params) + self.latetime(model_params)).flatten()
         else:
-            return self.earlytime(model_params) + self.latetime(model_params)
+            return (self.earlytime(model_params) + self.latetime(model_params)) / fH
 
     def earlytime(self, model_params, z=None, power=(1.0 / 5.0)):
         if z is not None:
@@ -101,9 +110,12 @@ class Gorce2022(Pee):
         a_xe = model_params['a_xe']
         k_xe = model_params['k_xe']
 
+        # print('(fH - xe)', (fH - xe))
+        # print('(alpha_0 * xe**(a_xe))', (alpha_0 * xe**(a_xe)))
+        # print('(1.0/kappa)**3.0 * xe', (1.0/kappa)**3.0 * xe)
         # should be shape (z.size, k.size)
-        return (fH - xe) * (alpha_0 * xe**(a_xe)) / (1 + (k/kappa)**3 * xe**(k_xe))
-        # return (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3 * xe)
+        return (fH * np.ones_like(xe) - xe) * (alpha_0 * xe**(a_xe)) / (1 + (k/kappa)**3.0 * xe**(k_xe))
+        # return (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3.0 * xe)
 
     def latetime(self, model_params, z=None, k=None):
         if z is not None:
@@ -118,7 +130,7 @@ class Gorce2022(Pee):
 
         xe = self.xe[:, np.newaxis]
 
-        return xe * self.b_deltae(model_params)**2 * self.Pdd
+        return xe * self.b_deltae(model_params) * self.Pdd
 
     def b_deltae(self, model_params, z=None):
         if z is not None:
@@ -131,7 +143,7 @@ class Gorce2022(Pee):
         g = model_params['g']
 
         # should be shape (1, k.size)
-        b_deltae = (.5 * (np.exp(-k/k_f) + 1 / (1 + (g * k / k_f)**(7.0/2.0)))).reshape(1, k.size)
+        b_deltae = (.5 * (np.exp(-k/k_f) + 1 / (1 + (g * k / k_f)**(2.0)))).reshape(1, k.size)
         return b_deltae
 
     def calc_Pdd(self, z=None, k=None):
@@ -163,12 +175,14 @@ class Gorce2022(Pee):
         results = camb.get_results(pars)
 
         PK = camb.get_matter_power_interpolator(pars, nonlinear=True,
-            hubble_units=False, k_hunit=False, kmax=k[-1],
-            var1='delta_cdm',var2='delta_cdm', zmax=z[0])
+            hubble_units=False, k_hunit=False, kmax=k.max() * 2.0,
+            var1='delta_cdm',var2='delta_cdm', zmin=0.0, zmax=z.max() * 2.0)
 
 
         # should be shape(z.size, k.size)
         # also careful of the redshift ordering as outputted from CAMB!!!
+        # currently this function (not CAMB) returns the matter power spectrumm from 
+        # earliest to latest TIMES
         Pdd = PK.P(z[::-1], k)[::-1]
 
         return Pdd

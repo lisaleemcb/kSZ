@@ -60,7 +60,7 @@ fH = 1.
 if HeliumI:
 	not4 = 3.9715 #eta
 	fHe = Yp/(not4*(1-Yp))
-	fH=1+fHe
+	fH=1+2*fHe
 helium_fullreion_redshift = 3.5
 helium_fullreion_start = 5.0
 helium_fullreion_deltaredshift = 0.5
@@ -80,6 +80,14 @@ modelparams_Gorce2022 = {'alpha_0': 10**(3.93),
                   'k_xe': 1.0,
                     'k_f': 9.4,
                       'g': .5}
+
+KSZ_params = {'alpha_0': 10**3.7,
+                'kappa': .1,
+                'a_xe': -0.2,
+                'k_xe': 1.0,
+                'k_f': 9.4,
+                'g': 0.5}
+
 
 #########################################
 #### Settings for C_ells computation ####

@@ -1,25 +1,3 @@
-"""
-This is a skeleton file that can serve as a starting point for a Python
-console script. To run this script uncomment the following lines in the
-``[options.entry_points]`` section in ``setup.cfg``::
-
-    console_scripts =
-         fibonacci = ksz.skeleton:run
-
-Then run ``pip install .`` (or ``pip install -e .`` for editable mode)
-which will install the command ``fibonacci`` inside your current environment.
-
-Besides console scripts, the header (i.e. until ``_logger``...) of this file can
-also be used as template for Python modules.
-
-Note:
-    This file can be renamed depending on your needs or safely removed if not needed.
-
-References:
-    - https://setuptools.pypa.io/en/latest/userguide/entry_point.html
-    - https://pip.pypa.io/en/stable/reference/pip_install
-"""
-
 import argparse
 import logging
 import sys
@@ -109,15 +87,19 @@ def xe_allz(z, xe):
     return z_all, np.minimum(xe_all(z_all), (1.08 + xe_recomb)) + add_He
 
 def unpack_data(spectra, key, zrange, krange):
+    k0 = krange[0]
+    kf = krange[1] #+ 1 # to grab last index
+    ksize = kf - k0
 
-    ksize = krange[1]-krange[0]
     if isinstance(zrange, int):
         data = spectra[zrange][key][krange[0]:krange[1]]
     else:
-        zsize = zrange[1]-zrange[0]
+        z0 = zrange[0]
+        zf = zrange[1] #+ 1 # to grab last index
+        zsize = zf - z0
         data = np.zeros((zsize, ksize))
-        for i, zi in enumerate(range(zrange[0], zrange[1])):
-            data[i] = spectra[zi][key][krange[0]:krange[1]]
+        for i, zi in enumerate(range(z0, zf)):
+            data[i] = spectra[zi][key][k0:kf]
 
     return data
 
@@ -139,3 +121,29 @@ def unpack_params(model_params, ndim=2):
     params[0] = np.log10(params[0])
 
     return params
+
+
+# import matplotlib as m
+# cmap = m.cm.get_cmap('Blues')
+# norm = m.colors.Normalize(vmin=min_chi2-10, vmax=min_chi2+20.)
+# lvs = [min_chi2+2.30,min_chi2+6.17,min_chi2+11.8]
+# labels=[r'$68\%$',r'$95\%$',r'$99.7\%$']
+
+# plt.figure()
+# CS = plt.contour(kappas,alphas,chi2,levels=lvs,colors=[cmap(norm(lvs[0])),cmap(norm(lvs[1])),cmap(norm(lvs[2]))])#,linewidths=.8,colors='white')
+# plt.xlabel(r'$\kappa$ [Mpc$^{-1}$]',fontsize=13)
+# # plt.xlim(0.07,0.085)
+# plt.ylabel(r'log$\alpha_0$',fontsize=13)
+# # plt.ylim(4.05,4.2)
+# ax = plt.gca()
+# fmt={}
+# for l,s in zip(lvs, labels):
+#     fmt[l]=s
+# ax.clabel(CS,CS.levels,fmt=fmt,inline=True)
+# plt.scatter(kappa,alpha0,color='k',marker='+',s=100,lw=1.)
+
+# kappas_sims = np.array([0.093,0.094,0.098,0.100,0.089,0.093])
+# alphas_sims = np.array([3.86,3.85,3.80,3.78,3.91,3.87])
+# ax.scatter(kappas_sims,alphas_sims,color='navy',label='Our simulations',marker='+', s=80,zorder=10)
+
+# plt.tight_layout()
