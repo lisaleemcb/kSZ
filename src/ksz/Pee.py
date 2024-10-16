@@ -90,7 +90,7 @@ class Gorce2022(Pee):
         if len(self.z) == 1:
             return (self.earlytime(model_params) + self.latetime(model_params)).flatten()
         else:
-            return self.earlytime(model_params) + self.latetime(model_params)
+            return (self.earlytime(model_params) + self.latetime(model_params)) / fH
 
     def earlytime(self, model_params, z=None, power=(1.0 / 5.0)):
         if z is not None:
@@ -130,7 +130,7 @@ class Gorce2022(Pee):
 
         xe = self.xe[:, np.newaxis]
 
-        return xe * self.b_deltae(model_params)**2.0 * self.Pdd
+        return xe * self.b_deltae(model_params) * self.Pdd
 
     def b_deltae(self, model_params, z=None):
         if z is not None:
@@ -143,7 +143,7 @@ class Gorce2022(Pee):
         g = model_params['g']
 
         # should be shape (1, k.size)
-        b_deltae = (.5 * (np.exp(-k/k_f) + 1 / (1 + (g * k / k_f)**(7./2.0)))).reshape(1, k.size)
+        b_deltae = (.5 * (np.exp(-k/k_f) + 1 / (1 + (g * k / k_f)**(2.0)))).reshape(1, k.size)
         return b_deltae
 
     def calc_Pdd(self, z=None, k=None):
