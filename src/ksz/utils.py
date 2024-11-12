@@ -103,24 +103,15 @@ def unpack_data(spectra, key, zrange, krange):
 
     return data
 
-def pack_params(params):
-
-    model_params = cp.deepcopy(modelparams_Gorce2022)
-    for i in range(len(params)):
-        p = params[i]
-        if i == 0:
-            p = 10.**p
-
-        key = list(model_params.keys())[i]
-        model_params[key] = p
-
-    return model_params
-
-def unpack_params(model_params, ndim=2):
-    params = list(model_params.values())[:ndim]
-    params[0] = np.log10(params[0])
+def pack_params(pvals, pfit):
+    params = cp.deepcopy(modelparams_Gorce2022)
+    for i, key in enumerate(pfit):
+        params[key] = pvals[i]
 
     return params
+
+def unpack_params(params, pfit):
+    return np.asarray([params[key] for key in pfit])
 
 
 # import matplotlib as m
