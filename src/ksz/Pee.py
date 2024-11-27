@@ -17,11 +17,11 @@ class Pee:
         self.xe = xe
 
 
-        if np.all(z[:-1] < z[1:]):
-            warnings.warn("Your redshifts are ordered from latest times to earliest, your OUTPUT WILL BE REVERSED IN REDSHIFT", UserWarning)
+        # if np.all(z[:-1] < z[1:]):
+        #     warnings.warn("Your redshifts are ordered from latest times to earliest, your OUTPUT WILL BE REVERSED IN REDSHIFT", UserWarning)
 
-            self.z = z[::-1]
-            self.xe = xe[::-1]
+        #     self.z = z[::-1]
+        #     self.xe = xe[::-1]
 
         self.verbose = verbose
 
@@ -34,6 +34,7 @@ class Gorce2022(Pee):
                 model_params=None,
                 cosmo_params=None,
                 astro_params=None,
+                helium=False,
                 verbose=False):
 
         super().__init__(k, z, xe, verbose=verbose)
@@ -67,6 +68,11 @@ class Gorce2022(Pee):
         elif astro_params is None:
             self.astro_params = astro_fiducial
 
+        self.helium = helium
+        if self.helium:
+            self.fH = self.astro_params['fH']
+        else:
+            self.fH = 1.0
         self.spectra = self.calc_spectra(self.model_params)
 
         if verbose:
@@ -86,11 +92,10 @@ class Gorce2022(Pee):
         # if self.verbose:
         #     print('Calculating spectra with model parameters:', model_params)
         #     print('')
-
-        if len(self.z) == 1:
-            return (self.earlytime(model_params) + self.latetime(model_params)).flatten()
-        else:
-            return (self.earlytime(model_params) + self.latetime(model_params)) / fH
+        B = model_params['B']
+        one = np.ones_like(self.xe)[:,None]
+        f = (self.xe / self.fH)[:,None]
+        return  (one - f) * self.earlytime(model_params) + (B * (one - f) + f) * self.latetime(model_params)
 
     def earlytime(self, model_params, z=None, power=(1.0 / 5.0)):
         if z is not None:
@@ -103,9 +108,7 @@ class Gorce2022(Pee):
         # to ensure correct broadcasting
         k = k[np.newaxis,:]
         xe = self.xe[:, np.newaxis]
-
-        fH = self.astro_params['fH']
-        alpha_0 = model_params['alpha_0']
+        alpha0 = model_params['alpha0']
         kappa = model_params['kappa']
         a_xe = model_params['a_xe']
         k_xe = model_params['k_xe']
@@ -114,8 +117,8 @@ class Gorce2022(Pee):
         # print('(alpha_0 * xe**(a_xe))', (alpha_0 * xe**(a_xe)))
         # print('(1.0/kappa)**3.0 * xe', (1.0/kappa)**3.0 * xe)
         # should be shape (z.size, k.size)
-        return (fH * np.ones_like(xe) - xe) * (alpha_0 * xe**(a_xe)) / (1 + (k/kappa)**3.0 * xe**(k_xe))
-        # return (alpha_0 * xe**(-power)) / (1 + (k/kappa)**3.0 * xe)
+        return (10**alpha0 * xe**(a_xe)) / (1 + (k/kappa)**3.0 * xe**(k_xe))
+        #return (10**alpha0 * xe**(-power)) / (1 + (k/kappa)**3.0 * xe)
 
     def latetime(self, model_params, z=None, k=None):
         if z is not None:
@@ -130,7 +133,7 @@ class Gorce2022(Pee):
 
         xe = self.xe[:, np.newaxis]
 
-        return xe * self.b_deltae(model_params) * self.Pdd
+        return self.b_deltae(model_params) * self.Pdd
 
     def b_deltae(self, model_params, z=None):
         if z is not None:

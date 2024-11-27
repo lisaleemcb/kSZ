@@ -86,41 +86,25 @@ def xe_allz(z, xe):
 
     return z_all, np.minimum(xe_all(z_all), (1.08 + xe_recomb)) + add_He
 
-def unpack_data(spectra, key, zrange, krange):
-    k0 = krange[0]
-    kf = krange[1] #+ 1 # to grab last index
-    ksize = kf - k0
+def unpack_data(spectra_dict):
+    data = np.zeros((len(spectra_dict), spectra_dict[0]['P_k'].size))
 
-    if isinstance(zrange, int):
-        data = spectra[zrange][key][krange[0]:krange[1]]
-    else:
-        z0 = zrange[0]
-        zf = zrange[1] #+ 1 # to grab last index
-        zsize = zf - z0
-        data = np.zeros((zsize, ksize))
-        for i, zi in enumerate(range(z0, zf)):
-            data[i] = spectra[zi][key][k0:kf]
+    # if isinstance(zrange, int):
+    #     data = spectra[zrange][key][krange[0]:krange[1]]
+    for i in range(len(spectra_dict)):
+        data[i] = spectra_dict[i]['P_k']
 
     return data
 
-def pack_params(params):
-
-    model_params = cp.deepcopy(modelparams_Gorce2022)
-    for i in range(len(params)):
-        p = params[i]
-        if i == 0:
-            p = 10.**p
-
-        key = list(model_params.keys())[i]
-        model_params[key] = p
-
-    return model_params
-
-def unpack_params(model_params, ndim=2):
-    params = list(model_params.values())[:ndim]
-    params[0] = np.log10(params[0])
+def pack_params(pvals, pfit):
+    params = cp.deepcopy(modelparams_Gorce2022)
+    for i, key in enumerate(pfit):
+        params[key] = pvals[i]
 
     return params
+
+def unpack_params(params, pfit):
+    return np.asarray([params[key] for key in pfit])
 
 
 # import matplotlib as m

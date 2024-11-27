@@ -1,15 +1,46 @@
 import numpy as np
 from astropy import cosmology, units, constants
+import matplotlib
+import matplotlib.pyplot as plt
 
 #######################################
 ########### System settings ###########
 #######################################
 
+##########################
+####  Helpful things  ####
+##########################
+box_size= 296.0 # Mpc
+k_res = ((2 * np.pi) / box_size, (2 * np.pi * 256) / box_size / 2)
+k_bins = np.geomspace(k_res[0], k_res[1], 26)
+k_center = []
+for i in range(k_bins.size-1):
+    k_center.append((k_bins[i] + k_bins[i+1]) / 2)
+
+k_center = np.asarray(k_center)
+
+norm_z = matplotlib.colors.Normalize(vmin=3.0, vmax=22)
+cmap_z = plt.get_cmap('viridis_r')
+
+norm_xe = matplotlib.colors.LogNorm(vmin=1.7e-4, vmax=1.16)
+cmap_xe = plt.get_cmap('plasma')
+
+colors = ['green', 'blue', 'plum', 'goldenrod', 'midnightblue', 'deeppink', 'tomato']
+
+##########################
+####  Fitting params  ####
+##########################
+
+kmin = k_res[0]
+kmax = 1.5 # To avoid the splitting between the LoReLi spectra and Gorce model at high k
+
+xemin = .01
+xemax = .98
 
 ##########################
 #### Cosmo parameters ####
 ##########################
-h = 0.678 * units.km / units.s / units.Mpc
+h = 0.678 #* units.km / units.s / units.Mpc
 Om_0 = 0.308
 OL_0 = 0.692
 Ob_0 = 0.0484
@@ -71,22 +102,24 @@ astro_fiducial = {'fH': fH}
 #### Model parameters ####
 ##########################
 # parameters for Pee
-log_alpha0 = 3.7
+alpha0 = 3.7
 kappa = 0.10
 
-modelparams_Gorce2022 = {'alpha_0': 10**(3.93),
-                  'kappa': 0.084,
-                  'a_xe': -1.0 / 5.0,
-                  'k_xe': 1.0,
-                    'k_f': 9.4,
-                      'g': .5}
+modelparams_Gorce2022 = {'alpha0': 3.93,
+                        'kappa': 0.084,
+                        'a_xe': -1.0 / 5.0,
+                        'k_xe': 1.0,
+                        'k_f': 9.4,
+                        'g': .5,
+				        'B': 0.0}
 
-KSZ_params = {'alpha_0': 10**3.7,
-                'kappa': .1,
+KSZ_params = {'alpha0': 3.7,
+                'kappa': 0.1,
                 'a_xe': -0.2,
                 'k_xe': 1.0,
                 'k_f': 9.4,
-                'g': 0.5}
+                'g': 0.5,
+				'B': 0.0}
 
 
 #########################################
