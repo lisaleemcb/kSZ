@@ -1,8 +1,7 @@
 import numpy as np
 import copy as cp
 import matplotlib.pyplot as plt
-import emcee
-import corner
+import emceec
 
 import ksz.analyse
 import ksz.utils

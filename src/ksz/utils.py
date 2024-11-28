@@ -5,7 +5,6 @@ import numpy as np
 import copy as cp
 
 from scipy.interpolate import CubicSpline
-from catwoman.utils import find_index
 from ksz.parameters import modelparams_Gorce2022
 from ksz import __version__
 
@@ -106,6 +105,15 @@ def pack_params(pvals, pfit):
 def unpack_params(params, pfit):
     return np.asarray([params[key] for key in pfit])
 
+def find_index(arr):
+    for i in range(arr.size - 1):
+        a = arr[i:]
+       # print(f'array looks like {a}')
+        if np.all(a[:-1] < a[1:]):
+            return i
+
+    print('No monotonically increasing part of this function. Are you sure this is correct?')
+    return NaN
 
 # import matplotlib as m
 # cmap = m.cm.get_cmap('Blues')
