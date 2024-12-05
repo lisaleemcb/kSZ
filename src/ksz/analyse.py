@@ -107,7 +107,7 @@ class Fit:
                 obs_errs=None,
                 frac_err=None,
                 load_errs=True,
-                model_type=ksz.Pee.Gorce2022,
+                model_type=ksz.Pee.Gorce,
                 Pdd=None,
                 pfit=['alpha0', 'kappa'],
                 fit_early=False,
