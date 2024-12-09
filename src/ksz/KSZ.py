@@ -18,7 +18,7 @@ from astropy import cosmology, constants
 
 from scipy.interpolate import CubicSpline, BSpline, splrep, RegularGridInterpolator
 
-from parameters import *
+from ksz.parameters import *
 
 def get_KSZ(ells, interpolate_xe=True, debug=False, interpolate_Pee=False,
             Pee_data=None, xe_data=None, z_data=None, k_data=None, alpha0=alpha0, kappa=kappa,
