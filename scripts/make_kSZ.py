@@ -46,12 +46,10 @@ for sn in sims:
     Gorce_fn = f'{kSZ_path}/Gorce/kSZ_Gorce_simu{sn}'
     LoReLi_fn = f'{kSZ_path}/LoReLi/kSZ_LoReLi_simu{sn}'
 
-    print('here1')
     if os.path.exists(Gorce_fn):
         if os.path.isfile(Gorce_fn):
             print('Spectra already calculated, skipping...')
             continue
-    print('here2')
 
     if os.path.exists(param_fn):
         if os.path.isfile(param_fn):
@@ -60,13 +58,16 @@ for sn in sims:
         else:
             continue
 
+    print(f'params for sim {sn} loaded...')
     bf = bf['bf'].item()
     print(bf)
     print()
     alpha0 = bf[str(sn)]['alpha0']
     kappa = bf[str(sn)]['kappa']
 
+    print('loading data...')
     data = np.load(f'{Pee_path}/simu{sn}_Pee_spectra.npz', allow_pickle=True)
+    print('data loaded...')
 
     k = []
     Pee = []
