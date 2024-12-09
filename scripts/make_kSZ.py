@@ -22,7 +22,6 @@ Pee_path = '/home/emc-brid/spectra/Pee'
 kSZ_path = '/home/emc-brid/spectra/kSZ'
 params_path = '/home/emc-brid/lklhd_files'
 
-
 pattern = re.compile(r"simu(\d+)\_Pee_spectra.npz")
 
 # List to store the extracted numbers
@@ -47,13 +46,16 @@ for sn in sims:
     Gorce_fn = f'{kSZ_path}/Gorce/kSZ_Gorce_simu{sn}'
     LoReLi_fn = f'{kSZ_path}/LoReLi/kSZ_LoReLi_simu{sn}'
 
+    print('here1')
     if os.path.exists(Gorce_fn):
         if os.path.isfile(Gorce_fn):
             print('Spectra already calculated, skipping...')
             continue
+    print('here2')
 
     if os.path.exists(param_fn):
         if os.path.isfile(param_fn):
+            print('here3')
             bf = np.load(param_fn, allow_pickle=True)
         else:
             continue

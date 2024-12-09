@@ -510,7 +510,7 @@ class KSZ_power:
 
         integ = constants.c.value * constants.sigma_T.value * self.nh * xe \
             / cos.H(z).si.value * (1+z)**2
-        tofz = cumtrapz(integ[::-1], z, initial=0)[::-1]
+        tofz = cumulative_trapezoid(integ[::-1], z, initial=0)[::-1]
 
         return tofz
 
@@ -1101,7 +1101,7 @@ class KSZ_power:
         )
 
         ### Compute Delta_B^2, in [s-2.Mpc^2]
-        self.Delta_B2 = simps(simps(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))
+        self.Delta_B2 = simpson(simpson(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))
         # # Compute C_kSZ(ell) integrand, unit 1
         prefac = 8.0 * np.pi ** 2.0 / (2.0 * ell + 1.0) ** 3.0 \
             * (constants.sigma_T.value / constants.c.value) ** 2.0
@@ -1110,14 +1110,14 @@ class KSZ_power:
             * (self.n_H_z_integ[g] * self.x_i_z_integ[g] / (1.0 + z_integ[g])) ** 2.0
             * np.exp(-2.0 * self.tau_z_integ[g]) * self.eta_z_integ[g]
             * self.detadz_z_integ[g] * Mpcm ** 3.0
-            * simps(simps(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))[g]
+            * simpson(simpson(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))[g]
         )
-        k_integrand = simps(
+        k_integrand = simpson(
             prefac
             * (self.n_H_z_integ[g, None] * self.x_i_z_integ[g, None] / (1.0 + z_integ[g, None])) ** 2.0
             * np.exp(-2.0 * self.tau_z_integ[g, None]) * self.eta_z_integ[g, None]
             * self.detadz_z_integ[g, None] * Mpcm ** 3.0
-            * simps(self.Delta_B2_integrand[g], th_integ),
+            * simpson(self.Delta_B2_integrand[g], th_integ),
             z_integ[g],
             axis=0
         )
@@ -1195,7 +1195,7 @@ class KSZ_power:
             * self.I_e
         )
         ### Compute Delta_B^2, in [s-2.Mpc^2]
-        self.Delta_B2 = simps(simps(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))
+        self.Delta_B2 = simpson(simpson(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))
 
         ### Compute C_kSZ(ell) integrand, unit 1
         self.C_ell_kSZ_integrand = (
