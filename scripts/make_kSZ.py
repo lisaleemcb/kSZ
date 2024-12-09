@@ -14,15 +14,15 @@ from scipy.interpolate import RegularGridInterpolator, RectBivariateSpline
 from catwoman.shelter import Cat
 
 
-# Pee_path = '/Users/emcbride/spectra/Pee'
-# kSZ_path = '/Users/emcbride/spectra/kSZ'
-# fits_path = '/Users/emcbride/lklhd_files'
-# params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
+Pee_path = '/Users/emcbride/spectra/Pee'
+kSZ_path = '/Users/emcbride/spectra/kSZ'
+fits_path = '/Users/emcbride/lklhd_files'
+params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
 
-Pee_path = '/home/emc-brid/spectra/Pee'
-kSZ_path = '/home/emc-brid/spectra/kSZ'
-fits_path = '/home/emc-brid/lklhd_files'
-params_path = '/home/emc-brid/param_files'
+# Pee_path = '/home/emc-brid/spectra/Pee'
+# kSZ_path = '/home/emc-brid/spectra/kSZ'
+# fits_path = '/home/emc-brid/lklhd_files'
+# params_path = '/home/emc-brid/param_files'
 
 pattern = re.compile(r"simu(\d+)\_Pee_spectra.npz")
 
@@ -59,9 +59,11 @@ for sn in sims:
     if os.path.exists(fit_fn):
         if os.path.isfile(fit_fn):
            bf = np.load(fit_fn, allow_pickle=True) 
-        else:
-            print('no fits file! skipping...')
-            continue
+           print(fit_fn)
+    else:
+        print('no fits file! skipping...')
+        continue
+
     print(f'params for sim {sn} loaded...')
     bf = bf['bf'].item()
     print(bf)
