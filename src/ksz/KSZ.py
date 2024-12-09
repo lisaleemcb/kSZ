@@ -12,7 +12,7 @@ import warnings
 from camb import model
 import numpy as np
 import multiprocessing
-from scipy.integrate import simps, cumtrapz, trapz
+from scipy.integrate import simpson, cumulative_trapezoid, trapezoid
 from scipy.interpolate import interp1d
 from astropy import cosmology, constants
 
