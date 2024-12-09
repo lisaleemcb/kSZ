@@ -46,6 +46,8 @@ for sn in sims:
     Gorce_fn = f'{kSZ_path}/Gorce/kSZ_Gorce_simu{sn}'
     LoReLi_fn = f'{kSZ_path}/LoReLi/kSZ_LoReLi_simu{sn}'
 
+    print()
+    print('loading params...')
     if os.path.exists(Gorce_fn):
         if os.path.isfile(Gorce_fn):
             print('Spectra already calculated, skipping...')
@@ -53,7 +55,6 @@ for sn in sims:
 
     if os.path.exists(param_fn):
         if os.path.isfile(param_fn):
-            print('here3')
             bf = np.load(param_fn, allow_pickle=True)
         else:
             continue
@@ -69,6 +70,9 @@ for sn in sims:
     data = np.load(f'{Pee_path}/simu{sn}_Pee_spectra.npz', allow_pickle=True)
     print('data loaded...')
 
+    print('')
+
+    print('smoothing Pee...')
     k = []
     Pee = []
     for i in range(0,data['k'].size - 1,2):
@@ -77,12 +81,20 @@ for sn in sims:
 
     Pee = np.asarray(Pee).T
 
+    print('Pee smoothed...')
+    print()
+
+    print('simulating Gorce spectrum...')
+    print('----------------------------')
+
     #sim = Cat(sn, verbose=True)
     Gorce = ksz.KSZ.get_KSZ(ells, interpolate_xe=True, debug=False, interpolate_Pee=False,
                 Pee_data=None, xe_data=data['xe'], z_data=data['z'], k_data=None, alpha0=alpha0, kappa=kappa,
                 kmin=1e-6, kmax=3000, xemin=0.0, xemax=1.16, verbose=True, helium_interp=False)
     
     print()
+    print('simulating LoReLi spectrum...')
+    print('----------------------------')
     
     LoReLi = ksz.KSZ.get_KSZ(ells, interpolate_xe=True, debug=False, interpolate_Pee=True,
                 Pee_data=data['Pk'], xe_data=data['xe'], z_data=data['z'], k_data=data['k'], alpha0=alpha0, kappa=kappa,
