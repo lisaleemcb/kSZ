@@ -1,7 +1,7 @@
 import numpy as np
 import copy as cp
 import matplotlib.pyplot as plt
-import emceec
+import emcee
 
 import ksz.analyse
 import ksz.utils
