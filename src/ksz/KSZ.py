@@ -1101,7 +1101,7 @@ class KSZ_power:
         )
 
         ### Compute Delta_B^2, in [s-2.Mpc^2]
-        self.Delta_B2 = simpson(simpson(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))
+        self.Delta_B2 = simpson(simpson(self.Delta_B2_integrand, x=th_integ), x=np.log10(self.kp_integ))
         # # Compute C_kSZ(ell) integrand, unit 1
         prefac = 8.0 * np.pi ** 2.0 / (2.0 * ell + 1.0) ** 3.0 \
             * (constants.sigma_T.value / constants.c.value) ** 2.0
@@ -1110,20 +1110,20 @@ class KSZ_power:
             * (self.n_H_z_integ[g] * self.x_i_z_integ[g] / (1.0 + z_integ[g])) ** 2.0
             * np.exp(-2.0 * self.tau_z_integ[g]) * self.eta_z_integ[g]
             * self.detadz_z_integ[g] * Mpcm ** 3.0
-            * simpson(simpson(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))[g]
+            * simpson(simpson(self.Delta_B2_integrand, x=th_integ), x=np.log10(self.kp_integ))[g]
         )
         k_integrand = simpson(
             prefac
             * (self.n_H_z_integ[g, None] * self.x_i_z_integ[g, None] / (1.0 + z_integ[g, None])) ** 2.0
             * np.exp(-2.0 * self.tau_z_integ[g, None]) * self.eta_z_integ[g, None]
             * self.detadz_z_integ[g, None] * Mpcm ** 3.0
-            * simpson(self.Delta_B2_integrand[g], th_integ),
-            z_integ[g],
+            * simpson(self.Delta_B2_integrand[g], x=th_integ),
+            x=z_integ[g],
             axis=0
         )
 
         # Compute C_kSZ(ell), no units
-        Cell = trapz(z_integrand, z_integ[g])
+        Cell = trapezoid(z_integrand, z_integ[g])
         self.check_result(Cell)
 
         return np.c_[self.kp_integ, k_integrand], np.c_[z_integ[g], z_integrand], Cell
@@ -1195,7 +1195,7 @@ class KSZ_power:
             * self.I_e
         )
         ### Compute Delta_B^2, in [s-2.Mpc^2]
-        self.Delta_B2 = simpson(simpson(self.Delta_B2_integrand, th_integ), np.log10(self.kp_integ))
+        self.Delta_B2 = simpson(simpson(self.Delta_B2_integrand, x=th_integ), x=np.log10(self.kp_integ))
 
         ### Compute C_kSZ(ell) integrand, unit 1
         self.C_ell_kSZ_integrand = (
@@ -1212,10 +1212,10 @@ class KSZ_power:
         )
 
         ### Compute C_kSZ(ell), no units
-        result = trapz(self.C_ell_kSZ_integrand, z_integ)
+        result = trapezoid(self.C_ell_kSZ_integrand, z_integ)
         if patchy:
             g = z_integ >= self.zend_h
-            result_p = trapz(self.C_ell_kSZ_integrand[g], z_integ[g])
+            result_p = trapezoid(self.C_ell_kSZ_integrand[g], z_integ[g])
             return self.check_result(result_p), self.check_result(result)
         else:
             return self.check_result(result)
