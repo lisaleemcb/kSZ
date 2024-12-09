@@ -25,7 +25,7 @@ class Pee:
 
         self.verbose = verbose
 
-class Gorce2022(Pee):
+class Gorce(Pee):
     def __init__(self,
                 k,
                 z,
