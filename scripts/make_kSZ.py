@@ -60,8 +60,8 @@ for sn in sims:
         if os.path.isfile(fit_fn):
            bf = np.load(fit_fn, allow_pickle=True) 
         else:
+            print('no fits file! skipping...')
             continue
-
     print(f'params for sim {sn} loaded...')
     bf = bf['bf'].item()
     print(bf)
