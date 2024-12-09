@@ -22,7 +22,7 @@ from catwoman.shelter import Cat
 Pee_path = '/home/emc-brid/spectra/Pee'
 kSZ_path = '/home/emc-brid/spectra/kSZ'
 fits_path = '/home/emc-brid/lklhd_files'
-params_path = '/home/emc-brid/data/LoreLi_summaries/param_files'
+params_path = '/home/emc-brid/param_files'
 
 pattern = re.compile(r"simu(\d+)\_Pee_spectra.npz")
 
