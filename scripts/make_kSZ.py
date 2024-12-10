@@ -60,9 +60,9 @@ def main():
 
     ells = np.linspace(1,15000, 100)
 
-    for i, sn in enumerate(sims):
+    for j, sn in enumerate(sims):
         print('==================================')
-        print(f'Now on sim {sn}')
+        print(f'Now on the {j}th run for sim {sn}')
         print('==================================')
 
         fit_fn = f'{fits_path}/bestfit_params_simu{sn}.npz'
@@ -140,7 +140,7 @@ def main():
         print(f'saving spectra for simulation {sn}...')
         end_time = time.time()
         print(f"One kSZ run took {(end_time - start_time) / 60.0 :.3f} minutes")
-        print(f'{i+1} sims completed, {len(sims) - i+1} to go!')
+        print(f'{j+1} sims completed, {len(sims) - j+1} to go!')
 
 if __name__ == "__main__":
     main()

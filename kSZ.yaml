@@ -17,6 +17,7 @@ dependencies:
   - emcee
   - pip
   - pip:
+      - powerbox
       # - cobaya
       # - black
       - git+https://github.com/lisaleemcb/catwoman.git
