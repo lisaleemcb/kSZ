@@ -37,10 +37,15 @@ def main():
     # fits_path = '/Users/emcbride/lklhd_files'
     # params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
 
-    Pee_path = '/home/emc-brid/spectra/Pee'
-    kSZ_path = '/home/emc-brid/spectra/kSZ'
-    fits_path = '/home/emc-brid/lklhd_files'
-    params_path = '/home/emc-brid/param_files'
+    # Pee_path = '/home/emc-brid/spectra/Pee'
+    # kSZ_path = '/home/emc-brid/spectra/kSZ'
+    # fits_path = '/home/emc-brid/lklhd_files'
+    # params_path = '/home/emc-brid/param_files'
+
+    Pee_path = '/jet/home/emcbride/spectra/Pee'
+    kSZ_path = '/jet/home/emcbride/spectra/kSZ'
+    fits_path = '/jet/home/emcbride/lklhd_files'
+    params_path = '/jet/home/emcbride/param_files'
 
     # pattern = re.compile(r"simu(\d+)\_Pee_spectra.npz")
 
