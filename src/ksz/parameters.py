@@ -31,6 +31,7 @@ astro_labels = ['Xray_Lfunc', 'hard_Xray_fraction',
                 'gasconversion_timescale', 'log10_Mmin', 'ion_escapefrac_post']
 
 astro_pnames = ['L_X', 'f_X', 'tau', 'Mmin', 'f_esc']
+astro_pnames_formatted = ['$L_X$', '$f_X$', r'$\tau$', r'$M_{\text{min}}$', r'$f_{\text{esc}}$']
 
 astro_labels_formatted = [
  'Xray \n Lfunc',
@@ -138,7 +139,7 @@ KSZ_params = {'alpha0': 3.7,
 #### Settings for C_ells computation ####
 #########################################
 ### linear ell range for kSZ C_ells
-
+ells = np.linspace(1,15000, 100)
 
 ########################################
 #### Integration/precision settings ####

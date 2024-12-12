@@ -113,7 +113,7 @@ def find_index(arr):
             return i
 
     print('No monotonically increasing part of this function. Are you sure this is correct?')
-    return NaN
+    return np.nan
 
 # import matplotlib as m
 # cmap = m.cm.get_cmap('Blues')
