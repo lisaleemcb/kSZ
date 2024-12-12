@@ -25,9 +25,6 @@ def main():
     
     # Parse arguments
     args = parser.parse_args()
-    
-    # Load the numpy file
-    file_path = args.file
 
     # Pee_path = '/Users/emcbride/spectra/Pee'
     # kSZ_path = '/Users/emcbride/spectra/kSZ'
@@ -47,6 +44,8 @@ def main():
     if args.file:
         if os.path.exists(args.file):
             process_file(args.file)
+                # Load the numpy file
+            file_path = args.file
             sims = np.load(file_path)
             print('Sims list loaded for this run:')
             print(f'\t {sims}')
