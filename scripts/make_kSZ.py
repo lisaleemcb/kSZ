@@ -107,7 +107,7 @@ def main():
         #data = np.load(f'{Pee_path}/simu{sn}_Pee_spectra.npz', allow_pickle=True)
         sim_check = Cat(sn, skip_early=False, path_spectra=Pee_path, path_params=params_path, verbose=True)
 
-        if np.isnan(ksz.utils.find_index(sim.xe))
+        if np.isnan(ksz.utils.find_index(sim.xe)):
             print(f'Sim {sn} is missing redshifts! Skipping...')
             continue
 
