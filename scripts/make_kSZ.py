@@ -32,8 +32,6 @@ def main():
     print('Sims list loaded for this run:')
     print(f'\t {sims}')
 
-    start_time = time.time()
-
     # Pee_path = '/Users/emcbride/spectra/Pee'
     # kSZ_path = '/Users/emcbride/spectra/kSZ'
     # fits_path = '/Users/emcbride/lklhd_files'
@@ -62,6 +60,7 @@ def main():
 
     print(f'Now simulating {len(sims)} kSZ spectra!')
     for j, sn in enumerate(sims):
+        start_time = time.time()
         print('==================================')
         print(f'Now on the {j}th run for sim {sn}')
         print('==================================')
@@ -70,13 +69,14 @@ def main():
     # Gorce_fn = f'{kSZ_path}/Gorce/kSZ_Gorce_simu{sn}'
         LoReLi_fn = f'{kSZ_path}/LoReLi/kSZ_LoReLi_simu{sn}'
 
-        print()
-        print('loading params...')
         if os.path.exists(f'{LoReLi_fn}.npz'):
             if os.path.isfile(f'{LoReLi_fn}.npz'):
                 print('Spectra already calculated, skipping...')
                 continue
 
+
+        print()
+        print('loading params...')
         # if os.path.exists(fit_fn):
         #     if os.path.isfile(fit_fn):
         #         bf = np.load(fit_fn, allow_pickle=True) 
@@ -94,6 +94,12 @@ def main():
 
         print('loading data...')
         #data = np.load(f'{Pee_path}/simu{sn}_Pee_spectra.npz', allow_pickle=True)
+        sim_check = Cat(sn, skip_early=False, path_spectra=Pee_path, path_params=params_path, verbose=True)
+
+        if np.isnan(ksz.utils.find_index(sim.xe))
+            print(f'Sim {sn} is missing redshifts! Skipping...')
+            continue
+
         sim = Cat(sn, path_spectra=Pee_path, path_params=params_path, verbose=True)
         print('data loaded...')
 
@@ -130,7 +136,7 @@ def main():
         
         LoReLi_smoothed = ksz.KSZ.get_KSZ(ells, interpolate_xe=True, debug=False, interpolate_Pee=True,
                     Pee_data=Pee, xe_data=sim.xe, z_data=sim.z, k_data=k, alpha0=KSZ_params['alpha0'],
-                     kappa=KSZ_params['kappa'],
+                    kappa=KSZ_params['kappa'],
                     kmin=1e-6, kmax=3000, xemin=0.0, xemax=1.16, verbose=True, helium_interp=False)
         
         print()
