@@ -28,9 +28,6 @@ def main():
     
     # Load the numpy file
     file_path = args.file
-    sims = np.load(file_path)
-    print('Sims list loaded for this run:')
-    print(f'\t {sims}')
 
     # Pee_path = '/Users/emcbride/spectra/Pee'
     # kSZ_path = '/Users/emcbride/spectra/kSZ'
@@ -47,19 +44,28 @@ def main():
     fits_path = '/jet/home/emcbride/lklhd_files'
     params_path = '/jet/home/emcbride/param_files'
 
-    # pattern = re.compile(r"simu(\d+)\_Pee_spectra.npz")
+    if args.file:
+        if os.path.exists(args.file):
+            process_file(args.file)
+            sims = np.load(file_path)
+            print('Sims list loaded for this run:')
+            print(f'\t {sims}')
 
-    # # List to store the extracted numbers
-    # sims = []
-    # # Loop through files in the directory
-    # for filename in os.listdir(Pee_path):
-    #     match = pattern.match(filename)
-    #     if match:
-    #         # Extract the number (as an integer) and store it
-    #         sims.append(int(match.group(1)))
+    else:
+        pattern = re.compile(r"simu(\d+)\_Pee_spectra.npz")
 
-    # print(f'There are {len(sims)} sims available to parse! Getting started...')
-    # print()
+        # List to store the extracted numbers
+        sims = []
+        # Loop through files in the directory
+        for filename in os.listdir(Pee_path):
+            match = pattern.match(filename)
+            if match:
+                # Extract the number (as an integer) and store it
+                sims.append(int(match.group(1)))
+
+        print(f'There are {len(sims)} sims available to parse! Getting started...')
+        print()
+
 
     ells = np.linspace(1,15000, 100)
 
