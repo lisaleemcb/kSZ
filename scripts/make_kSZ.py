@@ -36,8 +36,10 @@ def main():
     # fits_path = '/home/emc-brid/lklhd_files'
     # params_path = '/home/emc-brid/param_files'
 
+    sim_path = '/jet/home/emcbride/ps_ee'
+    ion_path = '/jet/home/emcbride/ion_histories_full.npz'
     Pee_path = '/jet/home/emcbride/spectra/Pee'
-    kSZ_path = '/jet/home/emcbride/spectra/kSZ'
+    kSZ_path = '/jet/home/emcbride/LoReLi_format_kSZ'
     fits_path = '/jet/home/emcbride/lklhd_files'
     params_path = '/jet/home/emcbride/param_files'
 
@@ -104,7 +106,8 @@ def main():
 
         print('loading data...')
         #data = np.load(f'{Pee_path}/simu{sn}_Pee_spectra.npz', allow_pickle=True)
-        sim_check = Cat(sn, skip_early=False, path_spectra=Pee_path, path_params=params_path, verbose=True)
+        sim_check = Cat(sn, skip_early=False, path_sim=sim_path, path_spectra=Pee_path, path_params=params_path, path_ion=ion_path,
+                                    LoReLi_format,True, verbose=True)
 
         if np.isnan(ksz.utils.find_index(sim_check.xe)):
             print(f'Sim {sn} is missing redshifts! Skipping...')
