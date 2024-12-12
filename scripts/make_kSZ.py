@@ -21,7 +21,7 @@ import numpy as np
 def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Load a numpy file which is a list of sims.")
-    parser.add_argument("file", type=str, help="Path to the numpy file (.npy or .npz)")
+    parser.add_argument("--file", type=str, help="Path to the numpy file (.npy or .npz)")
     
     # Parse arguments
     args = parser.parse_args()
