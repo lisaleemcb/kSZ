@@ -27,6 +27,18 @@ cmap_xe = plt.get_cmap('plasma')
 
 colors = ['green', 'blue', 'plum', 'goldenrod', 'midnightblue', 'deeppink', 'tomato']
 
+astro_labels = ['Xray_Lfunc', 'hard_Xray_fraction',
+                'gasconversion_timescale', 'log10_Mmin', 'ion_escapefrac_post']
+
+astro_pnames = ['L_X', 'f_X', 'tau', 'Mmin', 'f_esc']
+
+astro_labels_formatted = [
+ 'Xray \n Lfunc',
+ 'hard \n Xray \n fraction',
+ 'gas \n conversion \n timescale',
+ 'log10_Mmin',                  
+ 'ion \n escapefrac \n post']
+
 ##########################
 ####  Fitting params  ####
 ##########################
