@@ -31,10 +31,12 @@ def main():
     # fits_path = '/Users/emcbride/lklhd_files'
     # params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
 
-    # Pee_path = '/home/emc-brid/spectra/Pee'
-    # kSZ_path = '/home/emc-brid/spectra/kSZ'
-    # fits_path = '/home/emc-brid/lklhd_files'
-    # params_path = '/home/emc-brid/param_files'
+    sim_path = 'home/emc-brid/ps_ee'
+    ion_path = 'home/emc-brid/ion_histories_full.npz'
+    Pee_path = '/home/emc-brid/spectra/Pee'
+    kSZ_path = '/home/emc-brid/spectra/kSZ'
+    fits_path = '/home/emc-brid/lklhd_files'
+    params_path = '/home/emc-brid/param_files'
 
     sim_path = '/jet/home/emcbride/ps_ee'
     ion_path = '/jet/home/emcbride/ion_histories_full.npz'
