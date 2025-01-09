@@ -45,7 +45,7 @@ def main():
 
     if args.file:
         if os.path.exists(args.file):
-            process_file(args.file)
+            #:process_file(args.file)
                 # Load the numpy file
             file_path = args.file
             sims = np.load(file_path)
