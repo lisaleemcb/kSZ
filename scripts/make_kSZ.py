@@ -68,13 +68,13 @@ def main():
         print()
 
 
-    ells = np.linspace(1,15000, 100)
+    ells = np.linspace(1,15000, 30)
 
     print(f'Now simulating {len(sims)} kSZ spectra!')
     for j, sn in enumerate(sims):
         start_time = time.time()
         print('==================================')
-        print(f'Now on the {j}th run for sim {sn}')
+        print(f'Now on the {j+1}th run for sim {sn}')
         print('==================================')
 
        # fit_fn = f'{fits_path}/bestfit_params_simu{sn}.npz'
