@@ -38,12 +38,12 @@ def main():
     fits_path = '/home/emc-brid/lklhd_files'
     params_path = '/home/emc-brid/param_files'
 
-    sim_path = '/jet/home/emcbride/ps_ee'
-    ion_path = '/jet/home/emcbride/ion_histories_full.npz'
-    Pee_path = '/jet/home/emcbride/spectra/Pee'
-    kSZ_path = '/jet/home/emcbride/LoReLi_format_kSZ'
-    fits_path = '/jet/home/emcbride/lklhd_files'
-    params_path = '/jet/home/emcbride/param_files'
+    # sim_path = '/jet/home/emcbride/ps_ee'
+    # ion_path = '/jet/home/emcbride/ion_histories_full.npz'
+    # Pee_path = '/jet/home/emcbride/spectra/Pee'
+    # kSZ_path = '/jet/home/emcbride/LoReLi_format_kSZ'
+    # fits_path = '/jet/home/emcbride/lklhd_files'
+    # params_path = '/jet/home/emcbride/param_files'
 
     if args.file:
         if os.path.exists(args.file):
