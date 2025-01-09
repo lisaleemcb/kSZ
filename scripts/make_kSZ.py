@@ -108,14 +108,25 @@ def main():
 
         print('loading data...')
         #data = np.load(f'{Pee_path}/simu{sn}_Pee_spectra.npz', allow_pickle=True)
-        sim_check = Cat(sn, skip_early=False, path_sim=sim_path, path_spectra=Pee_path, path_params=params_path, path_ion=ion_path,
-                                    LoReLi_format,True, verbose=True)
+        sim_check = Cat(sn, skip_early=False,
+                            path_sim=sim_path,
+                        #    path_spectra=Pee_path,
+                            path_params=params_path,
+                            path_ion=ion_path,
+                            LoReLi_format=True,
+                            verbose=True)
 
         if np.isnan(ksz.utils.find_index(sim_check.xe)):
             print(f'Sim {sn} is missing redshifts! Skipping...')
             continue
 
-        sim = Cat(sn, path_spectra=Pee_path, path_params=params_path, verbose=True)
+        sim = Cat(sn, skip_early=True,
+                            path_sim=sim_path,
+                        #    path_spectra=Pee_path,
+                            path_params=params_path,
+                            path_ion=ion_path,
+                            LoReLi_format=True,
+                            verbose=True)
         print('data loaded...')
 
         print('')
