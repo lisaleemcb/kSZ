@@ -21,4 +21,4 @@ echo "Hello world, from the Cluster!"
 which mamba
 mamba activate kSZ
 which python
-python -u /home/emc-brid/kSZ/scripts/make_kSZ.py 
+python -u /home/emc-brid/kSZ/scripts/make_kSZ.py --file /home/emc-brid/test_list.npy 
