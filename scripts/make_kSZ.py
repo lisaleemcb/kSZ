@@ -72,6 +72,17 @@ def main():
 
     ells = np.linspace(1,15000, 30)
 
+    # check is a dir exists for this numbers of ells
+    # and if not, make one
+    
+    sim_dir = f'{kSZ_path}/LoReLi/nells{ells.size}'
+    if not os.path.exists(sim_dir):
+        # Create the folder
+        os.makedirs(sim_dir)
+        print(f"Folder created: {sim_dir}")
+    else:
+        print(f"Folder already exists: {sim_dir}") 
+
     print(f'Now simulating {len(sims)} kSZ spectra!')
     for j, sn in enumerate(sims):
         start_time = time.time()
@@ -81,13 +92,12 @@ def main():
 
        # fit_fn = f'{fits_path}/bestfit_params_simu{sn}.npz'
     # Gorce_fn = f'{kSZ_path}/Gorce/kSZ_Gorce_simu{sn}'
-        LoReLi_fn = f'{kSZ_path}/LoReLi/kSZ_LoReLi_simu{sn}'
+        LoReLi_fn = f'{sim_dir}/kSZ_LoReLi_simu{sn}'
 
         if os.path.exists(f'{LoReLi_fn}.npz'):
             if os.path.isfile(f'{LoReLi_fn}.npz'):
                 print('Spectra already calculated, skipping...')
                 continue
-
 
         print()
         print('loading params...')
@@ -171,7 +181,7 @@ def main():
         np.savez(LoReLi_fn, ells=ells, kSZ=LoReLi_smoothed)
         #np.savez(LoReLi_fn, ells=ells, kSZ=LoReLi)
 
-        print(f'saving spectra for simulation {sn}...')
+        print(f'saving spectra for simulation {sn} at {LoReLi_fn}...')
         end_time = time.time()
         print(f"One kSZ run took {(end_time - start_time) / 60.0 :.3f} minutes")
         print(f'{j+1} sims completed, {len(sims)-j} to go!')
