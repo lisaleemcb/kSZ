@@ -14,9 +14,8 @@ import ksz.KSZ
 from scipy.interpolate import RegularGridInterpolator, RectBivariateSpline
 from catwoman.shelter import Cat
 
-
 import argparse
-import numpy as np
+
 
 def main():
     # Set up argument parser
@@ -30,6 +29,8 @@ def main():
     # kSZ_path = '/Users/emcbride/spectra/kSZ'
     # fits_path = '/Users/emcbride/lklhd_files'
     # params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
+
+    print("Here we go!!!")
 
     sim_path = '/home/emc-brid/ps_ee'
     ion_path = '/home/emc-brid/ion_histories_full.npz'
