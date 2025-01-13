@@ -14,11 +14,12 @@ date
 
 # source bash profile
 source /home/emc-brid/.bashrc
+source ~/venvs/riddler/bin/activate
 
 # run the Unix 'date' command
 echo "Hello world, from the Cluster!"
 # run the Unix 'echo' command
-which mamba
-mamba activate kSZ
+# which mamba
+# mamba activate kSZ
 which python
-python -u /home/emc-brid/kSZ/scripts/make_kSZ.py --file /home/emc-brid/test_list.npy 
+python -u /home/emc-brid/kSZ/scripts/make_kSZ.py --file /home/emc-brid/sims_check.npy 
