@@ -30,6 +30,8 @@ def main():
     # fits_path = '/Users/emcbride/lklhd_files'
     # params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
 
+    baddies = ['15593']
+
     print("Here we go!!!")
 
     sim_path = '/home/emc-brid/ps_ee'
@@ -86,6 +88,10 @@ def main():
 
     print(f'Now simulating {len(sims)} kSZ spectra!')
     for j, sn in enumerate(sims):
+
+        if sn in baddies:
+            print(f'Skipping sim {sn} because it is a baddie!!')
+            continue
         start_time = time.time()
         print('==================================')
         print(f'Now on the {j+1}th run for sim {sn}')
