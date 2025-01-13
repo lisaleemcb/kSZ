@@ -142,7 +142,7 @@ def main():
 
         print('')
 
-        if np.isnan(sim.Pee):
+        if np.any(np.isnan(sim.Pee)):
             print(f'Skipping sim {sn} due to no data!')
             continue
 
