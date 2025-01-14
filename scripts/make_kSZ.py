@@ -30,7 +30,7 @@ def main():
     # fits_path = '/Users/emcbride/lklhd_files'
     # params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
 
-    baddies = ['15593']
+    baddies = ['15593', '13492'] # these don't have redshift files
 
     print("Here we go!!!")
 
@@ -195,7 +195,7 @@ def main():
         print(f'saving spectra for simulation {sn} at {LoReLi_fn}...')
         end_time = time.time()
         print(f"One kSZ run took {(end_time - start_time) / 60.0 :.3f} minutes")
-        print(f'{j+1} sims completed, {len(sims)-j} to go!')
+        print(f'{j+1} sims completed, {len(sims)-(j - 1)} to go!')
 
 if __name__ == "__main__":
     main()
