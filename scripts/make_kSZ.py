@@ -123,6 +123,10 @@ def main():
         # alpha0 = bf[str(sn)]['alpha0']
         # kappa = bf[str(sn)]['kappa']
 
+        if not os.path.isfile(f'{sim_path}/simu{sn}/redshift_list.dat'):
+            print(f"No redshift file for sim {sn}, skipping...") 
+            continue
+
         print('loading data...')
         #data = np.load(f'{Pee_path}/simu{sn}_Pee_spectra.npz', allow_pickle=True)
         sim_check = Cat(sn, skip_early=False,
