@@ -30,7 +30,7 @@ def main():
     # fits_path = '/Users/emcbride/lklhd_files'
     # params_path = '/Users/emcbride/kSZ/data/LoreLi_summaries/param_files'
 
-    baddies = ['15593', '13492'] # these don't have redshift files
+    baddies = ['15593', '13492', '13493'] # these don't have redshift files
 
     print("Here we go!!!")
 
